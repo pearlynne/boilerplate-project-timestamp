@@ -26,30 +26,25 @@ app.get("/api/hello", function (req, res) {
 app.get("/api/:date", function (req, res) {
   let unix;
   let utc;
+  let date = new Date(req.params.date);
 
-  //An empty date parameter
-  if (JSON.stringify(req.params.date) == {}) {
-    unix = new Date().getTime();
-    utc = new Date().toUTCString();
-    res.json({ unix: unix, utc: utc });
-  }
-
-  let date = new Date(req.params.date); 
-  //If the input date string is invalid
-  if (isNaN(date)) {
-    // check if date is unix
-    if (isNaN(Number(req.params.date))) {
-      res.json({ error: "Invalid Date" });
-    } else { 
-      unix = Number(req.params.date);
-      utc = new Date(unix * 1000).toUTCString();
-      res.json({ unix: unix, utc: utc });
-    }
-  } else { 
+  //If the input date string is invalid or unix
+  if (isNaN(date) && isNaN(Number(req.params.date))) { 
+    res.json({ error: "Invalid Date" });
+  } else if (isNaN(date)) {
+    unix = Number(req.params.date);
+    utc = new Date(unix).toUTCString();
+  } else {
     unix = new Date(date).getTime();
     utc = new Date(date).toUTCString();
-    res.json({ unix: unix, utc: utc });
-  } 
+  }
+  res.json({ unix: unix, utc: utc });
+});
+
+app.get("/api/", function (req, res) {
+  unix = new Date().getTime();
+  utc = new Date().toUTCString();
+  res.json({ unix: unix, utc: utc });
 });
 
 // Listen on port set in environment variable or default to 3000
